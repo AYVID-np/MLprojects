@@ -6,13 +6,18 @@ from src.exception import CustomException
 import pandas as pd
 import sys
 
+
+from src.components.data_transformation import DataTransformationConfig, DataTransformation
+
 @dataclass
 class DataIngestionConfig:
+    """ Provides input to data ingestion component """
     train_data_path:str = os.path.join('artifacts','train.csv')
     test_data_path:str = os.path.join('artifacts', 'test.csv')
     raw_data_path:str = os.path.join('artifacts', 'raw.csv')
 
 class DataIngestion:
+    """This function is responsible for data ingestion from data sources"""
     def __init__(self):
         self.ingestion_config = DataIngestionConfig() 
 
@@ -40,8 +45,11 @@ class DataIngestion:
                 self.ingestion_config.test_data_path,
             )
         except Exception as e:
-            CustomException(e, sys)
+            raise CustomException(e, sys)
 
 if __name__ == "__main__":
     obj = DataIngestion()
-    obj.initiate_data_ingestion()
+    train_path, test_path = obj.initiate_data_ingestion()
+
+    data_transformation_obj = DataTransformation()
+    data_transformation_obj.initiate_data_transformation(train_path,test_path)
